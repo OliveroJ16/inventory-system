@@ -23,7 +23,7 @@ public class SalePayment {
 
     @Id
     @UuidGenerator
-    @Column(name = "id_sale_payment", nullable = false, updatable = false)
+    @Column(name = "id_sale_payment", nullable = false, updatable = false, columnDefinition = "UUID")
     private UUID id;
 
     @Column(name = "payment_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -36,7 +36,7 @@ public class SalePayment {
     @Column(name = "payment_type", nullable = false)
     private PaymentType paymentType;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_sale", nullable = false)
     private Sale sale;
 

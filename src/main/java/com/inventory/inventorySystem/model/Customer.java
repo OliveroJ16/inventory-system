@@ -33,10 +33,10 @@ public class Customer {
     @Column(name = "last_name", nullable = false, length = 45)
     private String lastName;
 
-    @Column(name = "phone", nullable = false, length = 20)
+    @Column(name = "phone", unique = true, nullable = false, length = 20)
     private String phone;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email", unique = true, length = 100)
     private String email;
 
     @Column(name = "address", length = 100)

@@ -25,13 +25,13 @@ public class User {
     @Column(name = "id_user", nullable = false)
     private UUID id;
 
-    @Column(name = "user_name", nullable = false, length = 75)
+    @Column(name = "user_name", unique = true, nullable = false, length = 75)
     private String userName;
 
     @Column(name = "full_name", nullable = false, length = 150)
     private String fullName;
 
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", unique = true, nullable = false, length = 100)
     private String email;
 
     @Enumerated(EnumType.STRING)
