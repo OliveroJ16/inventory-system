@@ -1,6 +1,5 @@
 package com.inventory.inventorySystem.model;
 
-import com.inventory.inventorySystem.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,22 +8,30 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
 @NoArgsConstructor
 @Getter
 @Setter
+@Entity
 @Table(name = "categories")
-@AttributeOverride(name = "id", column = @Column(name = "id_category"))
-public class Category extends BaseEntity {
+public class Category {
+
+    @Id
+    @Column(name = "id_category", nullable = false, columnDefinition = "UUID")
+    private UUID id;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
+    @Column(name = "creation_date", nullable = false)
+    private LocalDateTime creationDate;
+
     @Column(name = "status", nullable = false)
     private boolean status;
 
-    public Category(String name) {
+    public Category(UUID id, String name, LocalDateTime creationDate, boolean status) {
+        this.id = id;
         this.name = name;
-        this.status = true;
+        this.creationDate = creationDate;
+        this.status = status;
     }
 }
