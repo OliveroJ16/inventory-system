@@ -2,9 +2,12 @@ package com.inventory.inventorySystem.model;
 
 import com.inventory.inventorySystem.enums.SaleStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,14 +16,17 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "sales")
 public class Sale {
 
     @Id
+    @UuidGenerator
     @Column(name = "id_sale", nullable = false)
     private UUID id;
 
+    @CreationTimestamp
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
@@ -32,16 +38,14 @@ public class Sale {
     private SaleStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "id_customer", foreignKey = @ForeignKey(name = "fk_sale_customer"))
+    @JoinColumn(name = "id_customer")
     private Customer customer;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_user", nullable = false, foreignKey = @ForeignKey(name = "fk_sale_user"))
+    @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    public Sale(UUID id, LocalDateTime date, BigDecimal totalSale, SaleStatus status, Customer customer, User user) {
-        this.id = id;
-        this.date = date;
+    public Sale(BigDecimal totalSale, SaleStatus status, Customer customer, User user) {
         this.totalSale = totalSale;
         this.status = status;
         this.customer = customer;

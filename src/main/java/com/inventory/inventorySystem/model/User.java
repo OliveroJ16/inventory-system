@@ -2,9 +2,12 @@ package com.inventory.inventorySystem.model;
 
 import com.inventory.inventorySystem.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,11 +15,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class User {
 
     @Id
+    @UuidGenerator
     @Column(name = "id_user", nullable = false)
     private UUID id;
 
@@ -36,20 +41,19 @@ public class User {
     @Column(name = "password", nullable = false, length = 250)
     private String password;
 
+    @CreationTimestamp
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
     @Column(name = "status", nullable = false)
-    private boolean status;
+    private Boolean status;
 
-    public User (UUID id, String userName, String fullName, String email, UserRole role, String password, LocalDateTime creationDate, boolean status){
-        this.id = id;
+    public User (String userName, String fullName, String email, UserRole role, String password, Boolean status){
         this.userName = userName;
         this.fullName = fullName;
         this.email = email;
         this.role = role;
         this.password =password;
-        this.creationDate = creationDate;
         this.status = status;
     }
 }
