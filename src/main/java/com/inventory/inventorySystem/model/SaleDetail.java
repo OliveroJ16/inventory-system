@@ -20,8 +20,8 @@ public class SaleDetail {
 
     @Id
     @UuidGenerator
-    @Column(name = "id_sale_detail", nullable = false)
-    private UUID idSaleDetail;
+    @Column(name = "id_sale_detail", nullable = false, columnDefinition = "UUID")
+    private UUID id;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;

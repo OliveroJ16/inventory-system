@@ -22,7 +22,7 @@ public class User {
 
     @Id
     @UuidGenerator
-    @Column(name = "id_user", nullable = false)
+    @Column(name = "id_user", nullable = false, columnDefinition = "UUID")
     private UUID id;
 
     @Column(name = "user_name", unique = true, nullable = false, length = 75)

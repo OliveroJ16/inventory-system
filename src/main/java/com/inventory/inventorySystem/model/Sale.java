@@ -23,7 +23,7 @@ public class Sale {
 
     @Id
     @UuidGenerator
-    @Column(name = "id_sale", nullable = false)
+    @Column(name = "id_sale", nullable = false, columnDefinition = "UUID")
     private UUID id;
 
     @CreationTimestamp

@@ -24,7 +24,7 @@ public class Customer {
 
     @Id
     @UuidGenerator
-    @Column(name = "id_customer", nullable = false)
+    @Column(name = "id_customer", nullable = false, columnDefinition = "UUID")
     private UUID id;
 
     @Column(name = "name", nullable = false, length = 45)
