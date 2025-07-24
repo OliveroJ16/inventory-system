@@ -2,7 +2,7 @@ package com.inventory.inventorySystem.service;
 
 import com.inventory.inventorySystem.dto.request.UserRequest;
 import com.inventory.inventorySystem.dto.response.UserResponse;
-import com.inventory.inventorySystem.mapper.UserMapper;
+import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
 import com.inventory.inventorySystem.model.User;
 import com.inventory.inventorySystem.repository.UserRepository;
 import com.inventory.inventorySystem.service.interfaces.UserService;

@@ -3,12 +3,14 @@ package com.inventory.inventorySystem.mapper;
 import com.inventory.inventorySystem.dto.request.UserRequest;
 import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.enums.UserRole;
+import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
 import com.inventory.inventorySystem.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper {
+public class UserMapperImpl implements UserMapper {
 
+    @Override
     public User toEntity(UserRequest userRequest) {
         if (userRequest == null) {
             return null;
@@ -23,6 +25,7 @@ public class UserMapper {
         return user;
     }
 
+    @Override
     public UserResponse toDto(User user) {
         if (user == null) {
             return null;
