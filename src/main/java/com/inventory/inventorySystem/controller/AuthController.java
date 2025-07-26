@@ -1,7 +1,7 @@
 package com.inventory.inventorySystem.controller;
 
 import com.inventory.inventorySystem.dto.request.RegisterRequest;
-import com.inventory.inventorySystem.dto.response.TokenResponse;
+import com.inventory.inventorySystem.dto.response.AuthResponse;
 import com.inventory.inventorySystem.service.interfaces.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
-        TokenResponse tokenResponse = authService.register(registerRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(tokenResponse);
+    public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
+        AuthResponse authResponse = authService.register(registerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
     }
 }

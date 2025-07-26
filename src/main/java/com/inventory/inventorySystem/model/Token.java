@@ -1,10 +1,8 @@
 package com.inventory.inventorySystem.model;
 import com.inventory.inventorySystem.enums.TokenType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
@@ -14,6 +12,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -33,11 +32,12 @@ public class Token {
     private TokenType tokenType;
 
     @Column(name = "expired", nullable = false)
-    private Boolean expired = false;
+    private Boolean expired;
 
     @Column(name = "revoked", nullable = false)
-    private Boolean revoked = false;
+    private Boolean revoked;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -45,8 +45,4 @@ public class Token {
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    public Token(String token, User user){
-        this.token = token;
-        this.user = user;
-    }
 }

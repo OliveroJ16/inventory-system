@@ -1,19 +1,18 @@
-package com.inventory.inventorySystem.service;
+package com.inventory.inventorySystem.security;
 
 import com.inventory.inventorySystem.dto.response.UserResponse;
-import com.inventory.inventorySystem.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 
-@Service
-public class JwtService {
+@Component
+public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
 

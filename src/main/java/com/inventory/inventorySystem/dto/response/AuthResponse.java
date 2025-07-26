@@ -1,6 +1,7 @@
 package com.inventory.inventorySystem.dto.response;
 
-public record TokenResponse(
+public record AuthResponse(
         String accessToken,
-        String refreshToken
+        String refreshToken,
+        UserResponse user
 ) { }

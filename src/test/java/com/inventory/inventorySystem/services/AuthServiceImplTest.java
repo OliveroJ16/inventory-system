@@ -1,13 +1,13 @@
 package com.inventory.inventorySystem.services;
 
 import com.inventory.inventorySystem.dto.request.RegisterRequest;
-import com.inventory.inventorySystem.dto.response.TokenResponse;
+import com.inventory.inventorySystem.dto.response.AuthResponse;
 import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.enums.UserRole;
 import com.inventory.inventorySystem.model.Token;
 import com.inventory.inventorySystem.repository.TokenRepository;
 import com.inventory.inventorySystem.service.AuthServiceImpl;
-import com.inventory.inventorySystem.service.JwtService;
+import com.inventory.inventorySystem.security.JwtTokenProvider;
 import com.inventory.inventorySystem.service.interfaces.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ class AuthServiceImplTest {
     private UserService userService;
 
     @Mock
-    private JwtService jwtService;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Mock
     private TokenRepository tokenRepository;
@@ -53,11 +53,11 @@ class AuthServiceImplTest {
         );
 
         when(userService.saveUser(request)).thenReturn(userResponse);
-        when(jwtService.generateToken(userResponse)).thenReturn("jwt-token");
-        when(jwtService.generateRefreshToken(userResponse)).thenReturn("refresh-token");
+        when(jwtTokenProvider.generateToken(userResponse)).thenReturn("jwt-token");
+        when(jwtTokenProvider.generateRefreshToken(userResponse)).thenReturn("refresh-token");
 
         // Act
-        TokenResponse result = authService.register(request);
+        AuthResponse result = authService.register(request);
 
         // Assert
         assertEquals("jwt-token", result.accessToken());

@@ -1,11 +1,14 @@
 package com.inventory.inventorySystem.service;
 
 import com.inventory.inventorySystem.dto.request.RegisterRequest;
-import com.inventory.inventorySystem.dto.response.TokenResponse;
+import com.inventory.inventorySystem.dto.response.AuthResponse;
 import com.inventory.inventorySystem.dto.response.UserResponse;
+import com.inventory.inventorySystem.enums.TokenType;
 import com.inventory.inventorySystem.model.Token;
 import com.inventory.inventorySystem.model.User;
 import com.inventory.inventorySystem.repository.TokenRepository;
+import com.inventory.inventorySystem.repository.UserRepository;
+import com.inventory.inventorySystem.security.JwtTokenProvider;
 import com.inventory.inventorySystem.service.interfaces.AuthService;
 import com.inventory.inventorySystem.service.interfaces.UserService;
 import org.springframework.stereotype.Service;
@@ -13,27 +16,35 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
-    public AuthServiceImpl(UserService userService, JwtService jwtService, TokenRepository tokenRepository){
+    public AuthServiceImpl(UserService userService, JwtTokenProvider jwtTokenProvider, TokenRepository tokenRepository, UserRepository userRepository){
         this.userService = userService;
-        this.jwtService = jwtService;
+        this.jwtTokenProvider = jwtTokenProvider;
         this.tokenRepository = tokenRepository;
+        this.userRepository = userRepository;
     }
 
-    public TokenResponse register(RegisterRequest registerRequest){
+    public AuthResponse register(RegisterRequest registerRequest){
         var userResponse = userService.saveUser(registerRequest);
-        var jwtToken = jwtService.generateToken(userResponse);
-        var refreshToken = jwtService.generateRefreshToken(userResponse);
+        var jwtToken = jwtTokenProvider.generateToken(userResponse);
+        var refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
         saveToken(userResponse, jwtToken);
-        return new TokenResponse(jwtToken, refreshToken);
+        return new AuthResponse(jwtToken, refreshToken, userResponse);
     }
 
     public void saveToken(UserResponse userResponse, String jwtToken){
-        var user = new User();
-        user.setId(userResponse.id());
-        var token = new Token(jwtToken, user);
+        User user = userRepository.findById(userResponse.id())
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userResponse.id()));
+        var token = Token
+                .builder()
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .user(user).build();
         tokenRepository.save(token);
     }
 }
