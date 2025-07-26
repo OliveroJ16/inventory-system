@@ -1,7 +1,7 @@
 package com.inventory.inventorySystem.controller;
 
 
-import com.inventory.inventorySystem.dto.request.UserRequest;
+import com.inventory.inventorySystem.dto.request.RegisterRequest;
 import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.service.interfaces.UserService;
 import org.springframework.http.HttpStatus;
@@ -18,11 +18,5 @@ public class UserController {
 
     public UserController(UserService userService){
         this.userService = userService;
-    }
-
-    @PostMapping
-    public ResponseEntity<UserResponse> registerUser(@RequestBody UserRequest userRequest) {
-        UserResponse userResponse = userService.registerUser(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 }

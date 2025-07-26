@@ -1,6 +1,6 @@
 package com.inventory.inventorySystem.service;
 
-import com.inventory.inventorySystem.dto.request.UserRequest;
+import com.inventory.inventorySystem.dto.request.RegisterRequest;
 import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
 import com.inventory.inventorySystem.model.User;
@@ -22,10 +22,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse registerUser(UserRequest userRequest){
-        User user = userMapper.toEntity(userRequest);
+    public UserResponse saveUser(RegisterRequest registerRequest){
+        User user = userMapper.toEntity(registerRequest);
 
-        String encodedPassword = passwordEncoder.encode(userRequest.password());
+        String encodedPassword = passwordEncoder.encode(registerRequest.password());
         user.setPassword(encodedPassword);
 
         User savedUser = userRepository.save(user);

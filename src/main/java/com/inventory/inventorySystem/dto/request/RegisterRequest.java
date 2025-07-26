@@ -1,6 +1,6 @@
 package com.inventory.inventorySystem.dto.request;
 
-public record UserRequest(
+public record RegisterRequest(
         String username,
         String fullName,
         String email,
