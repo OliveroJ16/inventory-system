@@ -29,18 +29,18 @@ public class AuthServiceImpl implements AuthService {
 
     public AuthResponse register(RegisterRequest registerRequest){
         var userResponse = userService.saveUser(registerRequest);
-        var jwtToken = jwtTokenProvider.generateToken(userResponse);
+        var accessToken = jwtTokenProvider.generateToken(userResponse);
         var refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
-        saveToken(userResponse, jwtToken);
-        return new AuthResponse(jwtToken, refreshToken, userResponse);
+        saveToken(userResponse, refreshToken);
+        return new AuthResponse(accessToken, refreshToken, userResponse);
     }
 
-    public void saveToken(UserResponse userResponse, String jwtToken){
+    public void saveToken(UserResponse userResponse, String refreshToken){
         User user = userRepository.findById(userResponse.id())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userResponse.id()));
         var token = Token
                 .builder()
-                .token(jwtToken)
+                .token(refreshToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
                 .revoked(false)
