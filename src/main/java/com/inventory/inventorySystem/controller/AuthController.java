@@ -1,5 +1,6 @@
 package com.inventory.inventorySystem.controller;
 
+import com.inventory.inventorySystem.dto.request.LoginRequest;
 import com.inventory.inventorySystem.dto.request.RegisterRequest;
 import com.inventory.inventorySystem.dto.response.AuthResponse;
 import com.inventory.inventorySystem.service.interfaces.AuthService;
@@ -21,7 +22,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
-        AuthResponse authResponse = authService.registerUser(registerRequest);
+        var authResponse = authService.registerUser(registerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> loginUser(@RequestBody LoginRequest loginRequest){
+        var authResponse = authService.loginUser(loginRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
     }
 }
