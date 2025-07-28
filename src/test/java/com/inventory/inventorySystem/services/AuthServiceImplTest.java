@@ -57,7 +57,7 @@ class AuthServiceImplTest {
         when(jwtTokenProvider.generateRefreshToken(userResponse)).thenReturn("refresh-token");
 
         // Act
-        AuthResponse result = authService.register(request);
+        AuthResponse result = authService.registerUser(request);
 
         // Assert
         assertEquals("jwt-token", result.accessToken());
