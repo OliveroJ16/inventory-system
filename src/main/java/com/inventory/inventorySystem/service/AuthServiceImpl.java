@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse registerUser(RegisterRequest registerRequest){
         var userResponse = userService.saveUser(registerRequest);
-        String accessToken = jwtTokenProvider.generateToken(userResponse);
+        String accessToken = jwtTokenProvider.generateAccessToken(userResponse);
         String refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
         saveToken(userResponse, refreshToken);
         return new AuthResponse(accessToken, refreshToken, userResponse);
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         var user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UsernameNotFoundException("User with email '" + request.email() + "' not found"));
         var userResponse = userMapper.toDto(user);
-        String accessToken = jwtTokenProvider.generateToken(userResponse);
+        String accessToken = jwtTokenProvider.generateAccessToken(userResponse);
         String refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
         var token = tokenRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new IllegalStateException("No token found for user with ID: " + user.getId()));
@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
         Token storedToken = tokenRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("No token associated with user ID: " + user.getId()));
 
-        String newAccessToken = jwtTokenProvider.generateToken(userResponse);
+        String newAccessToken = jwtTokenProvider.generateAccessToken(userResponse);
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
 
         updateStoredToken(storedToken, newRefreshToken);

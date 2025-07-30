@@ -12,24 +12,17 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public User toEntity(RegisterRequest registerRequest) {
-        if (registerRequest == null) {
-            return null;
-        }
-
         var user = new User();
         user.setUserName(registerRequest.username());
         user.setFullName(registerRequest.fullName());
         user.setEmail(registerRequest.email());
-        user.setRole(UserRole.ADMIN);
+        user.setRole(UserRole.CASHIER);
         user.setStatus(true);
         return user;
     }
 
     @Override
     public UserResponse toDto(User user) {
-        if (user == null) {
-            return null;
-        }
         return new UserResponse(
                 user.getId(),
                 user.getUserName(),

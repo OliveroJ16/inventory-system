@@ -24,8 +24,8 @@ public class Token {
     @Column(name = "id_token", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "token", nullable = false, columnDefinition = "TEXT")
-    private String token;
+    @Column(name = "token", nullable = false, unique = true, columnDefinition = "TEXT")
+    private String refreshToken;
 
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "token_type", nullable = false)
@@ -41,8 +41,7 @@ public class Token {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user", nullable = false, unique = true)
     private User user;
-
 }
