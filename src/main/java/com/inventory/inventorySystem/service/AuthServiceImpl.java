@@ -13,13 +13,14 @@ import com.inventory.inventorySystem.repository.UserRepository;
 import com.inventory.inventorySystem.security.JwtTokenProvider;
 import com.inventory.inventorySystem.service.interfaces.AuthService;
 import com.inventory.inventorySystem.service.interfaces.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -28,20 +29,11 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
-    public AuthServiceImpl(UserService userService, JwtTokenProvider jwtTokenProvider, TokenRepository tokenRepository, UserRepository userRepository, AuthenticationManager authenticationManager, UserMapper userMapper){
-        this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenRepository = tokenRepository;
-        this.userRepository = userRepository;
-        this.authenticationManager = authenticationManager;
-        this.userMapper = userMapper;
-    }
-
     @Override
     public AuthResponse registerUser(RegisterRequest registerRequest){
         var userResponse = userService.saveUser(registerRequest);
-        var accessToken = jwtTokenProvider.generateToken(userResponse);
-        var refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
+        String accessToken = jwtTokenProvider.generateToken(userResponse);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
         saveToken(userResponse, refreshToken);
         return new AuthResponse(accessToken, refreshToken, userResponse);
     }
@@ -54,20 +46,26 @@ public class AuthServiceImpl implements AuthService {
                         request.password()
                 )
         );
-        var user = userRepository.findByEmail(request.email()).orElseThrow();
+        var user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new UsernameNotFoundException("User with email '" + request.email() + "' not found"));
         var userResponse = userMapper.toDto(user);
-        var accessToken = jwtTokenProvider.generateToken(userResponse);
-        var refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
-        revokeAllUserTokens(user);
+        String accessToken = jwtTokenProvider.generateToken(userResponse);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
+        var token = tokenRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new IllegalStateException("No token found for user with ID: " + user.getId()));
+        token.setRevoked(false);
+        token.setExpired(false);
+        token.setRefreshToken(refreshToken);
+        tokenRepository.save(token);
         return new AuthResponse(accessToken, refreshToken, userResponse);
     }
 
     private void saveToken(UserResponse userResponse, String refreshToken){
-        User user = userRepository.findById(userResponse.id())
+        var user = userRepository.findById(userResponse.id())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userResponse.id()));
         var token = Token
                 .builder()
-                .token(refreshToken)
+                .refreshToken(refreshToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
                 .revoked(false)
@@ -75,14 +73,57 @@ public class AuthServiceImpl implements AuthService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(final User user){
-        final List<Token> validUserTokens = tokenRepository.findAllByUserIdAndExpiredIsFalseAndRevokedIsFalse(user.getId());
-        if(!validUserTokens.isEmpty()){
-            for(final Token token : validUserTokens){
-                token.setExpired(true);
-                token.setRevoked(true);
-            }
+    @Override
+    public AuthResponse refreshToken(String authHeader) {
+        String refreshToken = extractToken(authHeader);
+        String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + userEmail));
+
+        if (!jwtTokenProvider.isTokenValid(refreshToken, user)) {
+            throw new IllegalArgumentException("Refresh token is invalid or expired");
         }
-        tokenRepository.saveAll(validUserTokens);
+
+        var userResponse = userMapper.toDto(user);
+        Token storedToken = tokenRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("No token associated with user ID: " + user.getId()));
+
+        String newAccessToken = jwtTokenProvider.generateToken(userResponse);
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
+
+        updateStoredToken(storedToken, newRefreshToken);
+
+        return new AuthResponse(newAccessToken, newRefreshToken, userResponse);
+    }
+
+    private String extractToken(String authHeader) {
+        final String BEARER_PREFIX = "Bearer ";
+        if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+            throw new IllegalArgumentException("Invalid refresh token: missing or incorrect prefix");
+        }
+
+        String token = authHeader.substring(BEARER_PREFIX.length()).trim();
+        if (token.isEmpty()) {
+            throw new IllegalArgumentException("Invalid refresh token: token is empty");
+        }
+        return token;
+    }
+
+    private void updateStoredToken(Token token, String newRefreshToken) {
+        token.setRefreshToken(newRefreshToken);
+        token.setRevoked(false);
+        token.setExpired(false);
+        tokenRepository.save(token);
+    }
+
+    @Override
+    public void logout(String authHeader) {
+        String refreshToken = extractToken(authHeader);
+        var token = tokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("Token not found"));
+        token.setExpired(true);
+        token.setRevoked(true);
+        tokenRepository.save(token);
     }
 }
