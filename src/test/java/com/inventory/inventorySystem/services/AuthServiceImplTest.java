@@ -53,7 +53,7 @@ class AuthServiceImplTest {
         );
 
         when(userService.saveUser(request)).thenReturn(userResponse);
-        when(jwtTokenProvider.generateToken(userResponse)).thenReturn("jwt-token");
+        when(jwtTokenProvider.generateAccessToken(userResponse)).thenReturn("jwt-token");
         when(jwtTokenProvider.generateRefreshToken(userResponse)).thenReturn("refresh-token");
 
         // Act
