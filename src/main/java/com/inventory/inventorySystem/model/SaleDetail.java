@@ -39,11 +39,4 @@ public class SaleDetail {
 
     @Column(name = "subtotal", insertable = false, updatable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
-
-    public SaleDetail(Integer quantity, BigDecimal unitPrice, Sale sale, Article article) {
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.sale = sale;
-        this.article = article;
-    }
 }

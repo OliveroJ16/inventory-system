@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
@@ -35,17 +36,10 @@ public class Supplier {
     @Column(name = "address", length = 100)
     private String address;
 
-    @Column(name = "registration_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;
 
     @Column(name = "status", nullable = false)
     private Boolean status;
-
-    public Supplier(String fullName, String phone, String email, String address, Boolean status){
-        this.fullName = fullName;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.status = status;
-    }
 }

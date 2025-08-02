@@ -46,12 +46,4 @@ public class Sale {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
-
-    public Sale(BigDecimal totalSale, SaleStatus status, Customer customer, User user) {
-        this.totalSale = totalSale;
-        this.status = status;
-        this.customer = customer;
-        this.user = user;
-    }
-
 }

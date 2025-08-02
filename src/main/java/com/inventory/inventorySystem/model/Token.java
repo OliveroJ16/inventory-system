@@ -1,4 +1,5 @@
 package com.inventory.inventorySystem.model;
+
 import com.inventory.inventorySystem.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,7 +42,7 @@ public class Token {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_user", nullable = false, unique = true)
     private User user;
 }

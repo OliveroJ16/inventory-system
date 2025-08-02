@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name = "users")
 public class User {
 
     @Id
@@ -37,7 +37,7 @@ public class User {
     private String email;
 
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "role", nullable = false, columnDefinition = "user_role")
+    @Column(name = "role", nullable = false)
     private UserRole role;
 
     @Column(name = "password", nullable = false, length = 250)
@@ -49,13 +49,4 @@ public class User {
 
     @Column(name = "status", nullable = false)
     private Boolean status;
-
-    public User (String userName, String fullName, String email, UserRole role, String password, Boolean status){
-        this.userName = userName;
-        this.fullName = fullName;
-        this.email = email;
-        this.role = role;
-        this.password =password;
-        this.status = status;
-    }
 }

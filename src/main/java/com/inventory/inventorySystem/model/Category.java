@@ -33,9 +33,4 @@ public class Category {
 
     @Column(name = "status", nullable = false)
     private Boolean status;
-
-    public Category(String name, Boolean status) {
-        this.name = name;
-        this.status = status;
-    }
 }

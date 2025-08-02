@@ -29,7 +29,7 @@ public class PurchaseDetail {
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(name = "subtotal", nullable = false, precision = 10, scale = 2, insertable = false, updatable = false, columnDefinition = "NUMERIC(10,2) GENERATED ALWAYS AS (quantity * unit_price) STORED")
+    @Column(name = "subtotal", nullable = false, precision = 10, scale = 2, insertable = false, updatable = false)
     private BigDecimal subtotal;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -39,11 +39,4 @@ public class PurchaseDetail {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_article", nullable = false)
     private Article article;
-
-    public PurchaseDetail(Integer quantity, BigDecimal subtotal, Purchase purchase, Article article){
-        this.quantity = quantity;
-        this.subtotal = subtotal;
-        this.purchase = purchase;
-        this.article = article;
-    }
 }

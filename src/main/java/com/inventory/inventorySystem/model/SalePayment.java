@@ -28,7 +28,8 @@ public class SalePayment {
     @Column(name = "id_sale_payment", nullable = false, updatable = false, columnDefinition = "UUID")
     private UUID id;
 
-    @Column(name = "payment_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
 
     @Column(name = "amount_paid", nullable = false, precision = 10, scale = 2)
@@ -41,10 +42,4 @@ public class SalePayment {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_sale", nullable = false)
     private Sale sale;
-
-    public SalePayment(BigDecimal amountPaid, PaymentType paymentType, Sale sale){
-        this.amountPaid = amountPaid;
-        this.paymentType = paymentType;
-        this.sale = sale;
-    }
 }

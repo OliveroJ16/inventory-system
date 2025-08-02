@@ -49,22 +49,10 @@ public class Article{
     @Column(name = "image_url", length = 300)
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_category", nullable = false)
-    private Category category;
-
     @Column(name = "content", nullable = false, precision = 10, scale = 2)
     private BigDecimal content;
 
-    public Article(String name, BigDecimal unitPrice, Integer stock, String description, String unitOfMeasurement, Boolean status, String imageUrl, Category category, BigDecimal content) {
-        this.name = name;
-        this.unitPrice = unitPrice;
-        this.stock = stock;
-        this.description = description;
-        this.unitOfMeasurement = unitOfMeasurement;
-        this.status = status;
-        this.imageUrl = imageUrl;
-        this.category = category;
-        this.content = content;
-    }
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_category", nullable = false)
+    private Category category;
 }

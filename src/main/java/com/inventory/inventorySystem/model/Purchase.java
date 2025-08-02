@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
@@ -27,14 +28,15 @@ public class Purchase {
     @Column(name = "id_purchase", nullable = false, columnDefinition = "UUID")
     private UUID id;
 
-    @Column(name = "purchase_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "purchase_date", nullable = false)
     private LocalDateTime purchaseDate;
 
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "status", nullable = false, columnDefinition = "sale_status DEFAULT 'PENDING'")
+    @Column(name = "status", nullable = false)
     private SaleStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -44,11 +46,4 @@ public class Purchase {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
-
-    public Purchase(BigDecimal totalAmount, Supplier supplier, User user){
-        this.totalAmount = totalAmount;
-        this.supplier = supplier;
-        this.user = user;
-    }
-
 }

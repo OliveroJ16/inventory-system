@@ -45,12 +45,4 @@ public class Customer {
     @CreationTimestamp
     @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;
-
-    public Customer(String name, String lastName, String phone, String email, String address) {
-        this.name = name;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-    }
 }
