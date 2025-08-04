@@ -7,4 +7,5 @@ import com.inventory.inventorySystem.model.Category;
 public interface CategoryMapper {
     Category toEntity(CategoryRequest categoryRequest);
     CategoryResponse toDtos(Category category);
+    void applyPartialUpdate(Category category, CategoryRequest categoryRequest);
 }

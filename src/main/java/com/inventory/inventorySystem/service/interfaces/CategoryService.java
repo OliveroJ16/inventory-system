@@ -3,6 +3,9 @@ package com.inventory.inventorySystem.service.interfaces;
 import com.inventory.inventorySystem.dto.request.CategoryRequest;
 import com.inventory.inventorySystem.dto.response.CategoryResponse;
 
+import java.util.UUID;
+
 public interface CategoryService {
     CategoryResponse saveCategory(CategoryRequest categoryRequest);
+    CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest);
 }

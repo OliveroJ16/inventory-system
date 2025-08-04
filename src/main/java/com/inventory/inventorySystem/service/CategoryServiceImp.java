@@ -9,6 +9,8 @@ import com.inventory.inventorySystem.service.interfaces.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImp implements CategoryService {
@@ -20,5 +22,13 @@ public class CategoryServiceImp implements CategoryService {
         Category category = categoryMapper.toEntity(categoryRequest);
         Category categorySaved = categoryRepository.save(category);
         return categoryMapper.toDtos(categorySaved);
+    }
+
+    @Override
+    public CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest){
+        Category category = categoryRepository.findById(id).orElseThrow();
+        categoryMapper.applyPartialUpdate(category, categoryRequest);
+        categoryRepository.save(category);
+        return categoryMapper.toDtos(category);
     }
 }

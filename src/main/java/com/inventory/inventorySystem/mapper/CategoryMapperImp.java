@@ -13,7 +13,7 @@ public class CategoryMapperImp implements CategoryMapper {
     public Category toEntity(CategoryRequest categoryRequest) {
         var category = new Category();
         category.setName(categoryRequest.name());
-        category.setStatus(true);
+        category.setStatus(categoryRequest.status());
         return category;
     }
 
@@ -25,5 +25,15 @@ public class CategoryMapperImp implements CategoryMapper {
                 category.getCreationDate(),
                 category.getStatus()
         );
+    }
+
+    @Override
+    public void applyPartialUpdate(Category category, CategoryRequest categoryRequest) {
+        if (categoryRequest.name() != null) {
+            category.setName(categoryRequest.name());
+        }
+        if (categoryRequest.status() != null) {
+            category.setStatus(categoryRequest.status());
+        }
     }
 }
