@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface CategoryService {
     CategoryResponse saveCategory(CategoryRequest categoryRequest);
     CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest);
-    PaginatedResponse<CategoryResponse> getAllCategories(Pageable pageable);
+    PaginatedResponse<CategoryResponse> getAllCategories(String name, Pageable pageable);
 }

@@ -35,8 +35,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<CategoryResponse>>getAllCategories(@PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
-        PaginatedResponse<CategoryResponse> categoryResponse = categoryService.getAllCategories(pageable);
+    public ResponseEntity<PaginatedResponse<CategoryResponse>>getAllCategories(@RequestParam(required = false) String name, @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+        PaginatedResponse<CategoryResponse> categoryResponse = categoryService.getAllCategories(name, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(categoryResponse);
     }
 

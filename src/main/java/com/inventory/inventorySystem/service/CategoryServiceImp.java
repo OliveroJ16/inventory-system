@@ -37,8 +37,13 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Override
-    public PaginatedResponse<CategoryResponse> getAllCategories(Pageable pageable) {
-        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+    public PaginatedResponse<CategoryResponse> getAllCategories(String name, Pageable pageable) {
+        Page<Category> categoryPage;
+        if (name != null && !name.trim().isEmpty()) {
+            categoryPage = categoryRepository.findByNameContainingIgnoreCase(name, pageable);
+        } else {
+            categoryPage = categoryRepository.findAll(pageable);
+        }
         Page<CategoryResponse> responsePage = categoryPage.map(categoryMapper::toDtos);
         return new PaginatedResponse<>(responsePage);
     }
