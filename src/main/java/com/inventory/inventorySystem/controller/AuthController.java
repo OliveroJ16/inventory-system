@@ -4,6 +4,7 @@ import com.inventory.inventorySystem.dto.request.LoginRequest;
 import com.inventory.inventorySystem.dto.request.RegisterRequest;
 import com.inventory.inventorySystem.dto.response.AuthResponse;
 import com.inventory.inventorySystem.service.interfaces.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,13 +19,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<AuthResponse> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
         var authResponse = authService.registerUser(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> loginUser(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<AuthResponse> loginUser(@RequestBody @Valid LoginRequest loginRequest){
         var authResponse = authService.loginUser(loginRequest);
         return ResponseEntity.status(HttpStatus.OK).body(authResponse);
     }
