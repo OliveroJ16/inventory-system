@@ -2,8 +2,13 @@ package com.inventory.inventorySystem.controller;
 
 import com.inventory.inventorySystem.dto.request.CategoryRequest;
 import com.inventory.inventorySystem.dto.response.CategoryResponse;
+import com.inventory.inventorySystem.dto.response.PaginatedResponse;
 import com.inventory.inventorySystem.service.interfaces.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +31,12 @@ public class CategoryController {
     @PatchMapping("/{id}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable UUID id, @RequestBody CategoryRequest categoryRequest) {
         CategoryResponse categoryResponse = categoryService.updateCategory(id, categoryRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<PaginatedResponse<CategoryResponse>>getAllCategories(@PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+        PaginatedResponse<CategoryResponse> categoryResponse = categoryService.getAllCategories(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(categoryResponse);
     }
 

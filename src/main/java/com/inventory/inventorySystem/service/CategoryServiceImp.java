@@ -2,13 +2,17 @@ package com.inventory.inventorySystem.service;
 
 import com.inventory.inventorySystem.dto.request.CategoryRequest;
 import com.inventory.inventorySystem.dto.response.CategoryResponse;
+import com.inventory.inventorySystem.dto.response.PaginatedResponse;
 import com.inventory.inventorySystem.mapper.interfaces.CategoryMapper;
 import com.inventory.inventorySystem.model.Category;
 import com.inventory.inventorySystem.repository.CategoryRepository;
 import com.inventory.inventorySystem.service.interfaces.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,4 +35,12 @@ public class CategoryServiceImp implements CategoryService {
         categoryRepository.save(category);
         return categoryMapper.toDtos(category);
     }
+
+    @Override
+    public PaginatedResponse<CategoryResponse> getAllCategories(Pageable pageable) {
+        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+        Page<CategoryResponse> responsePage = categoryPage.map(categoryMapper::toDtos);
+        return new PaginatedResponse<>(responsePage);
+    }
+
 }
