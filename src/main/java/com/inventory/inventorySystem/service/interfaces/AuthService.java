@@ -7,6 +7,6 @@ import com.inventory.inventorySystem.dto.response.AuthResponse;
 public interface AuthService {
     AuthResponse registerUser(RegisterRequest registerRequest);
     AuthResponse loginUser(LoginRequest loginRequest);
-    AuthResponse refreshToken(String authHeader);
+    AuthResponse refreshToken(String refreshToken);
     void logout(String authHeader);
 }

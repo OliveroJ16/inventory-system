@@ -31,8 +31,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        var authResponse = authService.refreshToken(authHeader);
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody String refreshToken) {
+        var authResponse = authService.refreshToken(refreshToken);
         return ResponseEntity.status(HttpStatus.OK).body(authResponse);
     }
 
