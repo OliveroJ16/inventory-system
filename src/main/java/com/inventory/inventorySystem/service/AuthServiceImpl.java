@@ -5,6 +5,7 @@ import com.inventory.inventorySystem.dto.request.RegisterRequest;
 import com.inventory.inventorySystem.dto.response.AuthResponse;
 import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.enums.TokenType;
+import com.inventory.inventorySystem.exceptions.ResourceNotFoundException;
 import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
 import com.inventory.inventorySystem.model.Token;
 import com.inventory.inventorySystem.model.User;
@@ -47,12 +48,12 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
         var user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new UsernameNotFoundException("User with email '" + request.email() + "' not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Authentication failed"));
         var userResponse = userMapper.toDto(user);
         String accessToken = jwtTokenProvider.generateAccessToken(userResponse);
         String refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
         var token = tokenRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new IllegalStateException("No token found for user with ID: " + user.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Token", "userId", user.getId()));
         token.setRevoked(false);
         token.setExpired(false);
         token.setRefreshToken(refreshToken);
@@ -62,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
 
     private void saveToken(UserResponse userResponse, String refreshToken){
         var user = userRepository.findById(userResponse.id())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userResponse.id()));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userResponse.id()));
         var token = Token
                 .builder()
                 .refreshToken(refreshToken)
@@ -74,21 +75,25 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse refreshToken(String authHeader) {
-        String refreshToken = extractToken(authHeader);
+    public AuthResponse refreshToken(String refreshToken) {
         String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
 
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + userEmail));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", userEmail));
 
-        if (!jwtTokenProvider.isTokenValid(refreshToken, user)) {
-            throw new IllegalArgumentException("Refresh token is invalid or expired");
+        if (!jwtTokenProvider.isRefreshTokenValid(refreshToken, user)) {
+            //throw new TokenInvalidException("Refresh token is invalid or expired");
+            throw new IllegalArgumentException("Refresh token is invalid or expired 1 ");
+        }
+
+        Token storedToken = tokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new ResourceNotFoundException("Token", "Refresh Token", "Token invalid"));
+
+        if (storedToken.getRevoked() || storedToken.getExpired()) {
+            throw new IllegalArgumentException("Refresh token is invalid or expired 3");
         }
 
         var userResponse = userMapper.toDto(user);
-        Token storedToken = tokenRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("No token associated with user ID: " + user.getId()));
-
         String newAccessToken = jwtTokenProvider.generateAccessToken(userResponse);
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
 
@@ -119,9 +124,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(String authHeader) {
-        String refreshToken = extractToken(authHeader);
-        var token = tokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Token not found"));
+        String accessToken = extractToken(authHeader);
+        String userEmail = jwtTokenProvider.getUsernameFromToken(accessToken);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", userEmail));
+        if (!jwtTokenProvider.isAccessTokenValid(accessToken, user)) {
+            throw new IllegalArgumentException("Refresh token is invalid or expired 1 ");
+        }
+        Token token = tokenRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Token", "userId", user.getId()));
         token.setExpired(true);
         token.setRevoked(true);
         tokenRepository.save(token);
