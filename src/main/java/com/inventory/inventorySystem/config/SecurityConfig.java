@@ -2,9 +2,7 @@ package com.inventory.inventorySystem.config;
 
 import com.inventory.inventorySystem.repository.TokenRepository;
 import com.inventory.inventorySystem.repository.UserRepository;
-import com.inventory.inventorySystem.security.CustomUserDetailsService;
-import com.inventory.inventorySystem.security.JwtAuthFilter;
-import com.inventory.inventorySystem.security.JwtTokenProvider;
+import com.inventory.inventorySystem.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +30,8 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -63,7 +63,8 @@ public class SecurityConfig {
                                 .permitAll().anyRequest().authenticated()
                         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint).accessDeniedHandler(customAccessDeniedHandler));
         return http.build();
     }
 }

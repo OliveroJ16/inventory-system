@@ -5,6 +5,7 @@ import com.inventory.inventorySystem.dto.request.RegisterRequest;
 import com.inventory.inventorySystem.dto.response.AuthResponse;
 import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.enums.TokenType;
+import com.inventory.inventorySystem.exceptions.InvalidTokenException;
 import com.inventory.inventorySystem.exceptions.ResourceNotFoundException;
 import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
 import com.inventory.inventorySystem.model.Token;
@@ -82,15 +83,14 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", userEmail));
 
         if (!jwtTokenProvider.isRefreshTokenValid(refreshToken, user)) {
-            //throw new TokenInvalidException("Refresh token is invalid or expired");
-            throw new IllegalArgumentException("Refresh token is invalid or expired 1 ");
+            throw new InvalidTokenException("Refresh token is invalid or expired");
         }
 
         Token storedToken = tokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Token", "Refresh Token", "Token invalid"));
 
         if (storedToken.getRevoked() || storedToken.getExpired()) {
-            throw new IllegalArgumentException("Refresh token is invalid or expired 3");
+            throw new InvalidTokenException("Refresh token is invalid or expired");
         }
 
         var userResponse = userMapper.toDto(user);
@@ -105,12 +105,12 @@ public class AuthServiceImpl implements AuthService {
     private String extractToken(String authHeader) {
         final String BEARER_PREFIX = "Bearer ";
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            throw new IllegalArgumentException("Invalid refresh token: missing or incorrect prefix");
+            throw new InvalidTokenException("Invalid refresh token: missing or incorrect prefix");
         }
 
         String token = authHeader.substring(BEARER_PREFIX.length()).trim();
         if (token.isEmpty()) {
-            throw new IllegalArgumentException("Invalid refresh token: token is empty");
+            throw new InvalidTokenException("Invalid refresh token: token is empty");
         }
         return token;
     }
@@ -129,7 +129,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", userEmail));
         if (!jwtTokenProvider.isAccessTokenValid(accessToken, user)) {
-            throw new IllegalArgumentException("Refresh token is invalid or expired 1 ");
+            throw new InvalidTokenException("Refresh token is invalid or expired");
         }
         Token token = tokenRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Token", "userId", user.getId()));

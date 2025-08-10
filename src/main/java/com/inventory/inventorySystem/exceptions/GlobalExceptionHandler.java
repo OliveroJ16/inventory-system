@@ -3,6 +3,7 @@ package com.inventory.inventorySystem.exceptions;
 import com.inventory.inventorySystem.dto.response.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleResourceNotFound(ResourceNotFoundException exception, WebRequest request) {
+    public ResponseEntity<ApiErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest request) {
         var errorResponse = new ApiErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 "Not Found",
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ApiErrorResponse> handleUsernameNotFound(BadCredentialsException exception, WebRequest request) {
+    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(BadCredentialsException exception, WebRequest request) {
         var errorResponse = new ApiErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
                 "Unauthorized",
@@ -65,7 +66,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiErrorResponse> handleAuthException(AuthenticationException exception, WebRequest request) {
+    public ResponseEntity<ApiErrorResponse> handleAuthenticationExceptionException(AuthenticationException exception, WebRequest request) {
         var errorResponse = new ApiErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
                 "Unauthorized",
@@ -75,6 +76,32 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidTokenException(InvalidTokenException exception, WebRequest request) {
+        var errorResponse = new ApiErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                exception.getMessage(),
+                "Invalid token",
+                request.getDescription(false),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDeniedException(AccessDeniedException exception, WebRequest request) {
+        var errorResponse = new ApiErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
+                "You do not have permission to perform this action.",
+                "Authorization Error",
+                request.getDescription(false),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 }
 
