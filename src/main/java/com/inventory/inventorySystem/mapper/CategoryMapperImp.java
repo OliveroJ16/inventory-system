@@ -18,7 +18,7 @@ public class CategoryMapperImp implements CategoryMapper {
     }
 
     @Override
-    public CategoryResponse toDtos(Category category) {
+    public CategoryResponse toDto(Category category) {
         return new CategoryResponse(
                 category.getId(),
                 category.getName(),

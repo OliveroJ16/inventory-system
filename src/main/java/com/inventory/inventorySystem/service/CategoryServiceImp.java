@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,7 +24,7 @@ public class CategoryServiceImp implements CategoryService {
     public CategoryResponse saveCategory(CategoryRequest categoryRequest) {
         Category category = categoryMapper.toEntity(categoryRequest);
         Category categorySaved = categoryRepository.save(category);
-        return categoryMapper.toDtos(categorySaved);
+        return categoryMapper.toDto(categorySaved);
     }
 
     @Override
@@ -33,7 +32,7 @@ public class CategoryServiceImp implements CategoryService {
         Category category = categoryRepository.findById(id).orElseThrow();
         categoryMapper.applyPartialUpdate(category, categoryRequest);
         categoryRepository.save(category);
-        return categoryMapper.toDtos(category);
+        return categoryMapper.toDto(category);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class CategoryServiceImp implements CategoryService {
         } else {
             categoryPage = categoryRepository.findAll(pageable);
         }
-        Page<CategoryResponse> responsePage = categoryPage.map(categoryMapper::toDtos);
+        Page<CategoryResponse> responsePage = categoryPage.map(categoryMapper::toDto);
         return new PaginatedResponse<>(responsePage);
     }
 
