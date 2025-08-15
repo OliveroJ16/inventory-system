@@ -12,6 +12,8 @@ import com.inventory.inventorySystem.service.interfaces.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
@@ -27,5 +29,14 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleMapper.toEntity(articleRequest, category);
         Article articleSaved = articleRepository.save(article);
         return articleMapper.toDto(articleSaved);
+    }
+
+    @Override
+    public ArticleResponse updateArticle(UUID id, ArticleRequest articleRequest){
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
+        articleMapper.applyPartialUpdate(article, articleRequest);
+        articleRepository.save(article);
+        return articleMapper.toDto(article);
     }
 }

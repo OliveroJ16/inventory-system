@@ -3,6 +3,7 @@ package com.inventory.inventorySystem.service;
 import com.inventory.inventorySystem.dto.request.CategoryRequest;
 import com.inventory.inventorySystem.dto.response.CategoryResponse;
 import com.inventory.inventorySystem.dto.response.PaginatedResponse;
+import com.inventory.inventorySystem.exceptions.ResourceNotFoundException;
 import com.inventory.inventorySystem.mapper.interfaces.CategoryMapper;
 import com.inventory.inventorySystem.model.Category;
 import com.inventory.inventorySystem.repository.CategoryRepository;
@@ -29,7 +30,8 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest){
-        Category category = categoryRepository.findById(id).orElseThrow();
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
         categoryMapper.applyPartialUpdate(category, categoryRequest);
         categoryRepository.save(category);
         return categoryMapper.toDto(category);
