@@ -5,9 +5,8 @@ import com.inventory.inventorySystem.dto.response.ArticleResponse;
 import com.inventory.inventorySystem.mapper.interfaces.ArticleMapper;
 import com.inventory.inventorySystem.model.Article;
 import com.inventory.inventorySystem.model.Category;
+import com.inventory.inventorySystem.utils.StringNormalizer;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class ArticleMapperImpl implements ArticleMapper {
@@ -15,7 +14,7 @@ public class ArticleMapperImpl implements ArticleMapper {
     @Override
     public Article toEntity(ArticleRequest articleRequest, Category category) {
         var article = new Article();
-        article.setName(articleRequest.name());
+        article.setName(StringNormalizer.toTitleCase(articleRequest.name()));
         article.setUnitPrice(articleRequest.unitPrice());
         article.setStock(articleRequest.stock());
         article.setDescription(articleRequest.description());
@@ -47,7 +46,7 @@ public class ArticleMapperImpl implements ArticleMapper {
     @Override
     public void applyPartialUpdate(Article article, ArticleRequest articleRequest) {
         if (articleRequest.name() != null) {
-            article.setName(articleRequest.name());
+            article.setName(StringNormalizer.toTitleCase(articleRequest.name()));
         }
         if (articleRequest.unitPrice() != null) {
             article.setUnitPrice(articleRequest.unitPrice());

@@ -10,6 +10,7 @@ import com.inventory.inventorySystem.model.Category;
 import com.inventory.inventorySystem.repository.ArticleRepository;
 import com.inventory.inventorySystem.repository.CategoryRepository;
 import com.inventory.inventorySystem.service.interfaces.ArticleService;
+import com.inventory.inventorySystem.utils.StringNormalizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class ArticleServiceImpl implements ArticleService {
     public PaginatedResponse<ArticleResponse> getAllArticles(String name, org.springframework.data.domain.Pageable pageable) {
         Page<Article> articlePage;
         if(name != null && !name.trim().isEmpty()){
-            articlePage = articleRepository.findByNameContainingIgnoreCase(name, pageable);
+            articlePage = articleRepository.findByNameContainingIgnoreCase(StringNormalizer.toTitleCase(name), pageable);
         }else{
             articlePage = articleRepository.findAll(pageable);
         }

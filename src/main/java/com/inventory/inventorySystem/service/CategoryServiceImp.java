@@ -8,6 +8,7 @@ import com.inventory.inventorySystem.mapper.interfaces.CategoryMapper;
 import com.inventory.inventorySystem.model.Category;
 import com.inventory.inventorySystem.repository.CategoryRepository;
 import com.inventory.inventorySystem.service.interfaces.CategoryService;
+import com.inventory.inventorySystem.utils.StringNormalizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +42,7 @@ public class CategoryServiceImp implements CategoryService {
     public PaginatedResponse<CategoryResponse> getAllCategories(String name, Pageable pageable) {
         Page<Category> categoryPage;
         if (name != null && !name.trim().isEmpty()) {
-            categoryPage = categoryRepository.findByNameContainingIgnoreCase(name, pageable);
+            categoryPage = categoryRepository.findByNameContainingIgnoreCase(StringNormalizer.toTitleCase(name), pageable);
         } else {
             categoryPage = categoryRepository.findAll(pageable);
         }

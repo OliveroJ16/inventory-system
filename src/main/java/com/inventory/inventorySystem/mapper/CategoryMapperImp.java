@@ -4,6 +4,7 @@ import com.inventory.inventorySystem.dto.request.CategoryRequest;
 import com.inventory.inventorySystem.dto.response.CategoryResponse;
 import com.inventory.inventorySystem.mapper.interfaces.CategoryMapper;
 import com.inventory.inventorySystem.model.Category;
+import com.inventory.inventorySystem.utils.StringNormalizer;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +13,7 @@ public class CategoryMapperImp implements CategoryMapper {
     @Override
     public Category toEntity(CategoryRequest categoryRequest) {
         var category = new Category();
-        category.setName(categoryRequest.name());
+        category.setName(StringNormalizer.toTitleCase(categoryRequest.name()));
         category.setStatus(categoryRequest.status());
         return category;
     }
@@ -30,7 +31,7 @@ public class CategoryMapperImp implements CategoryMapper {
     @Override
     public void applyPartialUpdate(Category category, CategoryRequest categoryRequest) {
         if (categoryRequest.name() != null) {
-            category.setName(categoryRequest.name());
+            category.setName(StringNormalizer.toTitleCase(categoryRequest.name()));
         }
         if (categoryRequest.status() != null) {
             category.setStatus(categoryRequest.status());
