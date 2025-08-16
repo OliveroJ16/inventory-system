@@ -15,5 +15,6 @@ public record ArticleResponse(
         Boolean status,
         String imageUrl,
         BigDecimal content,
-        UUID id_category
+        UUID id_category,
+        String nameCategory
 ) { }

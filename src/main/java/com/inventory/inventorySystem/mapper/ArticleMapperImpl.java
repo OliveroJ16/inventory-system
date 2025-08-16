@@ -39,7 +39,8 @@ public class ArticleMapperImpl implements ArticleMapper {
                 article.getStatus(),
                 article.getImageUrl(),
                 article.getContent(),
-                article.getCategory().getId()
+                article.getCategory().getId(),
+                article.getCategory().getName()
         );
     }
 
