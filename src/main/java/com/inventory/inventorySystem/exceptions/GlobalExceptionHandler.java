@@ -103,5 +103,18 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
+
+    @ExceptionHandler(StockExhaustedException.class)
+    public ResponseEntity<ApiErrorResponse> handleStockInsufficientException(StockExhaustedException exception, WebRequest request) {
+        var errorResponse = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                exception.getMessage(),
+                "The requested quantity exceeds the available stock.",
+                request.getDescription(false),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
 

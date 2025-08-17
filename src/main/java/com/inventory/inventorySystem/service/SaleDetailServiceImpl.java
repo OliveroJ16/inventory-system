@@ -3,6 +3,7 @@ package com.inventory.inventorySystem.service;
 import com.inventory.inventorySystem.dto.request.SaleDetailRequest;
 import com.inventory.inventorySystem.dto.response.SaleDetailResponse;
 import com.inventory.inventorySystem.exceptions.ResourceNotFoundException;
+import com.inventory.inventorySystem.exceptions.StockExhaustedException;
 import com.inventory.inventorySystem.mapper.interfaces.SaleDetailMapper;
 import com.inventory.inventorySystem.model.Article;
 import com.inventory.inventorySystem.model.Sale;
@@ -50,7 +51,7 @@ public class SaleDetailServiceImpl implements SaleDetailService {
                 throw new ResourceNotFoundException("Article", "id", detailRequest.articleId());
             }
             if (article.getStock() <= 0) {
-                throw new RuntimeException("No hay stock disponible para el artículo: " + article.getName());
+                throw new StockExhaustedException("There is no stock available for the article: " + article.getName());
             }
 
             article.setStock(article.getStock() - detailRequest.quantity());
