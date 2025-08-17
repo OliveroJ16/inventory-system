@@ -4,6 +4,7 @@ import com.inventory.inventorySystem.enums.SaleStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record SaleResponse(
@@ -14,5 +15,6 @@ public record SaleResponse(
         UUID customerId,
         String customerName,
         UUID userId,
-        String userName
+        String userName,
+        List<SaleDetailResponse> details
 ) {}
