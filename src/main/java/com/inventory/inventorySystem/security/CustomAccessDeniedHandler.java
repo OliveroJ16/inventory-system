@@ -1,6 +1,7 @@
 package com.inventory.inventorySystem.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.inventory.inventorySystem.dto.response.ApiErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +35,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                 LocalDateTime.now()
         );
 
-        objectMapper.writeValue(response.getOutputStream(), errorResponse);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.writeValue(response.getOutputStream(), errorResponse);
     }
 }
