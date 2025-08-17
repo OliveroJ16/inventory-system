@@ -34,7 +34,12 @@ public class SaleServiceImpl implements SaleService {
         User user = userRepository.findById(saleRequest.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", saleRequest.userId()));
 
-        Customer customer = customerRepository.findById(saleRequest.customerId()).orElse(null);
+        Customer customer = null;
+        if(saleRequest.customerId() != null){
+            customer = customerRepository.findById(saleRequest.customerId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Customer", "id", saleRequest.customerId())
+            );
+        }
 
         Sale sale = saleMapper.toEntity(user, customer, customer != null);
         sale.setTotalSale(BigDecimal.ZERO);

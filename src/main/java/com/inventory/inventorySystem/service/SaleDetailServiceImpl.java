@@ -12,7 +12,9 @@ import com.inventory.inventorySystem.repository.SaleDetailRepository;
 import com.inventory.inventorySystem.service.interfaces.SaleDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,6 +28,7 @@ public class SaleDetailServiceImpl implements SaleDetailService {
     private final SaleDetailMapper saleDetailMapper;
     private final ArticleRepository articleRepository;
 
+    @Transactional
     @Override
     public List<SaleDetailResponse> registerSaleDetail(List<SaleDetailRequest> saleDetailRequest, Sale sale){
 
@@ -38,14 +41,25 @@ public class SaleDetailServiceImpl implements SaleDetailService {
         Map<UUID, Article> articleMap = articles.stream()
                 .collect(Collectors.toMap(Article::getId, a -> a));
 
-        List<SaleDetail> details = saleDetailRequest.stream()
-                .map(detailRequest -> {
-                    Article article = articleMap.get(detailRequest.articleId());
-                    if (article == null) {
-                        throw new ResourceNotFoundException("Article", "id", detailRequest.articleId());
-                    }
-                    return saleDetailMapper.toEntity(detailRequest, article, sale);
-                }).toList();
+        List<Article> articlesToUpdate = new ArrayList<>();
+        List<SaleDetail> details = new ArrayList<>();
+
+        saleDetailRequest.forEach(detailRequest -> {
+            Article article = articleMap.get(detailRequest.articleId());
+            if (article == null) {
+                throw new ResourceNotFoundException("Article", "id", detailRequest.articleId());
+            }
+            if (article.getStock() <= 0) {
+                throw new RuntimeException("No hay stock disponible para el artículo: " + article.getName());
+            }
+
+            article.setStock(article.getStock() - detailRequest.quantity());
+
+            articlesToUpdate.add(article);
+            details.add(saleDetailMapper.toEntity(detailRequest, article, sale));
+        });
+
+        articleRepository.saveAll(articlesToUpdate);
         saleDetailRepository.saveAll(details);
 
         return details.stream()
