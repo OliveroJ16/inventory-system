@@ -1,6 +1,7 @@
 package com.inventory.inventorySystem.mapper;
 
 import com.inventory.inventorySystem.dto.response.SaleDetailResponse;
+import com.inventory.inventorySystem.dto.response.SalePaymentResponse;
 import com.inventory.inventorySystem.dto.response.SaleResponse;
 import com.inventory.inventorySystem.enums.SaleStatus;
 import com.inventory.inventorySystem.mapper.interfaces.SaleMapper;
@@ -25,7 +26,7 @@ public class SaleMapperImpl implements SaleMapper {
     }
 
     @Override
-    public SaleResponse toDto(Sale sale, List<SaleDetailResponse> details) {
+    public SaleResponse toDto(Sale sale, SalePaymentResponse salePaymentResponse, List<SaleDetailResponse> details) {
         UUID customerId = null;
         String customerName = null;
 
@@ -43,6 +44,7 @@ public class SaleMapperImpl implements SaleMapper {
                 customerName,
                 sale.getUser().getId(),
                 sale.getUser().getFullName(),
+                salePaymentResponse,
                 details
         );
     }

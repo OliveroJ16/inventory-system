@@ -1,6 +1,7 @@
 package com.inventory.inventorySystem.dto.request;
 
 import com.inventory.inventorySystem.dto.OnCreate;
+import com.inventory.inventorySystem.enums.SaleStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,10 @@ public record SaleRequest(
         UUID userId,
 
         @NotEmpty(message = "Sale must have at least one detail", groups = OnCreate.class)
-        @Valid List<SaleDetailRequest> details
+        @Valid List<SaleDetailRequest> details,
+
+        @NotNull(message = "SalePayment cannot be null", groups = OnCreate.class)
+        @Valid SalePaymentRequest salePayment
 ) { }
 
 

@@ -20,5 +20,6 @@ public record SaleResponse(
         String customerName,
         UUID userId,
         String userName,
+        SalePaymentResponse salePayment,
         List<SaleDetailResponse> details
 ) {}
