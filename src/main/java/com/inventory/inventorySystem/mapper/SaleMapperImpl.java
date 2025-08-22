@@ -17,16 +17,15 @@ import java.util.UUID;
 public class SaleMapperImpl implements SaleMapper {
 
     @Override
-    public Sale toEntity(User user, Customer customer, boolean isCredit){
+    public Sale toEntity(User user, Customer customer){
         var sale = new Sale();
         sale.setCustomer(customer);
         sale.setUser(user);
-        sale.setStatus(isCredit ? SaleStatus.PENDING : SaleStatus.PAID);
         return sale;
     }
 
     @Override
-    public SaleResponse toDto(Sale sale, SalePaymentResponse salePaymentResponse, List<SaleDetailResponse> details) {
+    public SaleResponse toDto(Sale sale, List<SaleDetailResponse> details) {
         UUID customerId = null;
         String customerName = null;
 
@@ -44,7 +43,6 @@ public class SaleMapperImpl implements SaleMapper {
                 customerName,
                 sale.getUser().getId(),
                 sale.getUser().getFullName(),
-                salePaymentResponse,
                 details
         );
     }

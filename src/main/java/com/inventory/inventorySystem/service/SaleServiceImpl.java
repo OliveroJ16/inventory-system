@@ -17,6 +17,7 @@ import com.inventory.inventorySystem.service.interfaces.SaleDetailService;
 import com.inventory.inventorySystem.service.interfaces.SalePaymentService;
 import com.inventory.inventorySystem.service.interfaces.SaleService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,44 +41,38 @@ public class SaleServiceImpl implements SaleService {
         User user = userRepository.findById(saleRequest.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", saleRequest.userId()));
 
-        Customer customer = null;
-        if(saleRequest.customerId() != null){
-            customer = customerRepository.findById(saleRequest.customerId()).orElseThrow(
-                    () -> new ResourceNotFoundException("Customer", "id", saleRequest.customerId())
-            );
-        }
+        Customer customer = (saleRequest.customerId() != null)
+                ? customerRepository.findById(saleRequest.customerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", saleRequest.customerId()))
+                : null;
 
-        Sale sale = saleMapper.toEntity(user, customer, customer != null);
+        Sale sale = saleMapper.toEntity(user, customer);
         sale.setTotalSale(BigDecimal.ZERO);
+        sale.setStatus(SaleStatus.PENDING);
         sale = saleRepository.saveAndFlush(sale);
 
         List<SaleDetailResponse> saleDetailResponses = saleDetailService.registerSaleDetail(saleRequest.details(), sale);
         BigDecimal totalSale = saleDetailResponses.stream()
                 .map(SaleDetailResponse::subtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        sale.setTotalSale(totalSale);
 
         BigDecimal amountPaid = saleRequest.salePayment().amountPaid();
-        BigDecimal total = sale.getTotalSale();
 
-        if (amountPaid.compareTo(total) > 0) {
+        if (amountPaid.compareTo(totalSale) > 0) {
             throw new IllegalArgumentException("The amount paid cannot be greater than the total sale amount.");
+            // Handle this exception later
         }
 
-        if (sale.getStatus().equals(SaleStatus.PAID)) {
-            if (amountPaid.compareTo(total) != 0) {
-                throw new IllegalArgumentException("For a paid sale, the amount paid must be equal to the total.");
-            }
-        } else if (sale.getStatus().equals(SaleStatus.PENDING)) {
-            if (amountPaid.compareTo(total) >= 0) {
-                throw new IllegalArgumentException("For a credit sale, the amount paid cannot be equal to or greater than the total.");
-            }
+        if (amountPaid.compareTo(BigDecimal.ZERO) > 0) {
+            salePaymentService.saveSalePayment(saleRequest.salePayment(), sale);
+            sale.setStatus(amountPaid.compareTo(totalSale) == 0 ? SaleStatus.PAID : SaleStatus.PENDING);
+        } else {
+            sale.setStatus(SaleStatus.PENDING);
         }
 
-        sale.setTotalSale(totalSale);
         sale = saleRepository.save(sale);
 
-        SalePaymentResponse salePaymentResponse = salePaymentService.saveSalePayment(saleRequest.salePayment(), sale);
-
-        return saleMapper.toDto(sale, salePaymentResponse,saleDetailResponses);
+        return saleMapper.toDto(sale, saleDetailResponses);
     }
 }
