@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -29,8 +31,12 @@ public class SaleController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<SaleResponse>> getAllSales(@RequestParam(required = false) LocalDateTime startDate, @RequestParam(required = false) LocalDateTime endDate, @PageableDefault(page = 0, size = 10, direction = Sort.Direction.ASC)Pageable pageable){
-        PaginatedResponse<SaleResponse> saleResponses = saleService.getAllSales(startDate, endDate, pageable);
+    public ResponseEntity<PaginatedResponse<SaleResponse>> getAllSales(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String customerName,
+            @PageableDefault(page = 0, size = 10, sort = "date",direction = Sort.Direction.ASC)Pageable pageable){
+        PaginatedResponse<SaleResponse> saleResponses = saleService.getAllSales(startDate, endDate, customerName, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(saleResponses);
     }
 }

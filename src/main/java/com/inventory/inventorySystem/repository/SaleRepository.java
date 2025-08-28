@@ -12,4 +12,5 @@ import java.time.LocalDateTime;
 @Repository
 public interface SaleRepository extends JpaRepository<Sale, UUID> {
     Page<Sale> findByDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<Sale> findByCustomerName(String customerName, Pageable pageable);
 }

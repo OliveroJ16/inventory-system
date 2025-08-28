@@ -18,6 +18,7 @@ import com.inventory.inventorySystem.repository.UserRepository;
 import com.inventory.inventorySystem.service.interfaces.SaleDetailService;
 import com.inventory.inventorySystem.service.interfaces.SalePaymentService;
 import com.inventory.inventorySystem.service.interfaces.SaleService;
+import com.inventory.inventorySystem.utils.StringNormalizer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,11 +68,13 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public PaginatedResponse<SaleResponse> getAllSales(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable){
+    public PaginatedResponse<SaleResponse> getAllSales(LocalDate startDate, LocalDate endDate, String customerName, Pageable pageable){
         Page<Sale> salePage;
         if(startDate != null && endDate != null){
-            salePage = saleRepository.findByDateBetween(startDate, endDate, pageable);
-        }else{
+            salePage = saleRepository.findByDateBetween(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX), pageable);
+        }else if (customerName != null){
+            salePage = saleRepository.findByCustomerName(StringNormalizer.toTitleCase(customerName), pageable);
+        }else {
             salePage = saleRepository.findAll(pageable);
         }
         Page<SaleResponse> saleResponses = salePage.map(saleMapper::toDto);

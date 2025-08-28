@@ -6,9 +6,9 @@ import com.inventory.inventorySystem.dto.response.PaginatedResponse;
 import com.inventory.inventorySystem.dto.response.SaleResponse;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public interface SaleService {
     CompleteSaleResponse registerSale(SaleRequest saleRequest);
-    PaginatedResponse<SaleResponse> getAllSales(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    PaginatedResponse<SaleResponse> getAllSales(LocalDate startDate, LocalDate endDate, String customerName, Pageable pageable);
 }
