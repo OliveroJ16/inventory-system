@@ -15,6 +15,7 @@ import com.inventory.inventorySystem.utils.StringNormalizer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -46,7 +47,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public PaginatedResponse<ArticleResponse> getAllArticles(String name, org.springframework.data.domain.Pageable pageable) {
+    public PaginatedResponse<ArticleResponse> getAllArticles(String name, Pageable pageable) {
         Page<Article> articlePage;
         if(name != null && !name.trim().isEmpty()){
             articlePage = articleRepository.findByNameContainingIgnoreCase(StringNormalizer.toTitleCase(name), pageable);
