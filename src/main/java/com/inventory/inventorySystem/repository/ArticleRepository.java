@@ -10,5 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
-    Page<Article> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Article> findByName(String name, Pageable pageable);
 }

@@ -42,7 +42,7 @@ public class CategoryServiceImp implements CategoryService {
     public PaginatedResponse<CategoryResponse> getAllCategories(String name, Pageable pageable) {
         Page<Category> categoryPage;
         if (name != null && !name.trim().isEmpty()) {
-            categoryPage = categoryRepository.findByNameContainingIgnoreCase(StringNormalizer.toTitleCase(name), pageable);
+            categoryPage = categoryRepository.findByName(StringNormalizer.toTitleCase(name), pageable);
         } else {
             categoryPage = categoryRepository.findAll(pageable);
         }

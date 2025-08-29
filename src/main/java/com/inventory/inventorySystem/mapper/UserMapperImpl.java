@@ -5,6 +5,7 @@ import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.enums.UserRole;
 import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
 import com.inventory.inventorySystem.model.User;
+import com.inventory.inventorySystem.utils.StringNormalizer;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,8 +14,8 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public User toEntity(RegisterRequest registerRequest) {
         var user = new User();
-        user.setUserName(registerRequest.username());
-        user.setFullName(registerRequest.fullName());
+        user.setUserName(StringNormalizer.toTitleCase(registerRequest.username()));
+        user.setFullName(StringNormalizer.toTitleCase(registerRequest.fullName()));
         user.setEmail(registerRequest.email());
         user.setRole(UserRole.CASHIER);
         user.setStatus(true);

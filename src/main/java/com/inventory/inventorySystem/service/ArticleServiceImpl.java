@@ -50,7 +50,7 @@ public class ArticleServiceImpl implements ArticleService {
     public PaginatedResponse<ArticleResponse> getAllArticles(String name, Pageable pageable) {
         Page<Article> articlePage;
         if(name != null && !name.trim().isEmpty()){
-            articlePage = articleRepository.findByNameContainingIgnoreCase(StringNormalizer.toTitleCase(name), pageable);
+            articlePage = articleRepository.findByName(StringNormalizer.toTitleCase(name), pageable);
         }else{
             articlePage = articleRepository.findAll(pageable);
         }
