@@ -6,16 +6,20 @@ import com.inventory.inventorySystem.enums.UserRole;
 import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
 import com.inventory.inventorySystem.model.User;
 import com.inventory.inventorySystem.utils.StringNormalizer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapperImpl implements UserMapper {
+
+    private final StringNormalizer stringNormalizer;
 
     @Override
     public User toEntity(RegisterRequest registerRequest) {
         var user = new User();
-        user.setUserName(StringNormalizer.toTitleCase(registerRequest.username()));
-        user.setFullName(StringNormalizer.toTitleCase(registerRequest.fullName()));
+        user.setUserName(registerRequest.username());
+        user.setFullName(stringNormalizer.toTitleCase(registerRequest.fullName()));
         user.setEmail(registerRequest.email());
         user.setRole(UserRole.CASHIER);
         user.setStatus(true);

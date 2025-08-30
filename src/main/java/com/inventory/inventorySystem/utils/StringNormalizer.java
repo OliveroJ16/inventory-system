@@ -1,8 +1,11 @@
 package com.inventory.inventorySystem.utils;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class StringNormalizer{
 
-    public static String toTitleCase(String text) {
+    public String toTitleCase(String text) {
         if (text == null || text.isBlank()) {
             return text;
         }

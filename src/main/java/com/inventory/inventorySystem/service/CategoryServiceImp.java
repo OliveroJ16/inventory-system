@@ -21,6 +21,7 @@ import java.util.UUID;
 public class CategoryServiceImp implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final StringNormalizer stringNormalizer;
 
     @Override
     public CategoryResponse saveCategory(CategoryRequest categoryRequest) {
@@ -42,7 +43,7 @@ public class CategoryServiceImp implements CategoryService {
     public PaginatedResponse<CategoryResponse> getAllCategories(String name, Pageable pageable) {
         Page<Category> categoryPage;
         if (name != null && !name.trim().isEmpty()) {
-            categoryPage = categoryRepository.findByName(StringNormalizer.toTitleCase(name), pageable);
+            categoryPage = categoryRepository.findByName(stringNormalizer.toTitleCase(name), pageable);
         } else {
             categoryPage = categoryRepository.findAll(pageable);
         }

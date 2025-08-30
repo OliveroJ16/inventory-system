@@ -27,6 +27,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final ArticleMapper articleMapper;
     private final CategoryRepository categoryRepository;
+    private final StringNormalizer stringNormalizer;
 
     @Override
     public ArticleResponse saveArticle(ArticleRequest articleRequest){
@@ -50,7 +51,7 @@ public class ArticleServiceImpl implements ArticleService {
     public PaginatedResponse<ArticleResponse> getAllArticles(String name, Pageable pageable) {
         Page<Article> articlePage;
         if(name != null && !name.trim().isEmpty()){
-            articlePage = articleRepository.findByName(StringNormalizer.toTitleCase(name), pageable);
+            articlePage = articleRepository.findByName(stringNormalizer.toTitleCase(name), pageable);
         }else{
             articlePage = articleRepository.findAll(pageable);
         }

@@ -41,7 +41,7 @@ public class SaleServiceImpl implements SaleService {
     private final CustomerRepository customerRepository;
     private final SaleMapper saleMapper;
     private final SalePaymentService salePaymentService;
-    private final SaleDetailRepository saleDetailRepository;
+    private final StringNormalizer stringNormalizer;
 
     @Override
     @Transactional
@@ -73,7 +73,7 @@ public class SaleServiceImpl implements SaleService {
         if(startDate != null && endDate != null){
             salePage = saleRepository.findByDateBetween(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX), pageable);
         }else if (customerName != null){
-            salePage = saleRepository.findByCustomerName(StringNormalizer.toTitleCase(customerName), pageable);
+            salePage = saleRepository.findByCustomerName(stringNormalizer.toTitleCase(customerName), pageable);
         }else {
             salePage = saleRepository.findAll(pageable);
         }

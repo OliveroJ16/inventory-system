@@ -6,15 +6,19 @@ import com.inventory.inventorySystem.mapper.interfaces.ArticleMapper;
 import com.inventory.inventorySystem.model.Article;
 import com.inventory.inventorySystem.model.Category;
 import com.inventory.inventorySystem.utils.StringNormalizer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ArticleMapperImpl implements ArticleMapper {
+
+    private final StringNormalizer stringNormalizer;
 
     @Override
     public Article toEntity(ArticleRequest articleRequest, Category category) {
         var article = new Article();
-        article.setName(StringNormalizer.toTitleCase(articleRequest.name()));
+        article.setName(stringNormalizer.toTitleCase(articleRequest.name()));
         article.setUnitPrice(articleRequest.unitPrice());
         article.setStock(articleRequest.stock());
         article.setDescription(articleRequest.description());
@@ -47,7 +51,7 @@ public class ArticleMapperImpl implements ArticleMapper {
     @Override
     public void applyPartialUpdate(Article article, ArticleRequest articleRequest) {
         if (articleRequest.name() != null) {
-            article.setName(StringNormalizer.toTitleCase(articleRequest.name()));
+            article.setName(stringNormalizer.toTitleCase(articleRequest.name()));
         }
         if (articleRequest.unitPrice() != null) {
             article.setUnitPrice(articleRequest.unitPrice());
