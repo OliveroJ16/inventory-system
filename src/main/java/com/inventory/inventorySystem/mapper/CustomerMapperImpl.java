@@ -29,7 +29,7 @@ public class CustomerMapperImpl implements CustomerMapper {
     }
 
     @Override
-    public CustomerResponse toResponse(Customer customer) {
+    public CustomerResponse toDto(Customer customer) {
         if (customer == null) {
             return null;
         }

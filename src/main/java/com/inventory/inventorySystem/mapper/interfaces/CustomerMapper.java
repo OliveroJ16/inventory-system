@@ -6,6 +6,6 @@ import com.inventory.inventorySystem.model.Customer;
 
 public interface CustomerMapper {
     Customer toEntity(CustomerRequest request);
-    CustomerResponse toResponse(Customer customer);
+    CustomerResponse toDto(Customer customer);
     void applyPartialUpdate(Customer customer, CustomerRequest request);
 }
