@@ -2,10 +2,13 @@ package com.inventory.inventorySystem.service.interfaces;
 
 import com.inventory.inventorySystem.dto.request.CustomerRequest;
 import com.inventory.inventorySystem.dto.response.CustomerResponse;
+import com.inventory.inventorySystem.dto.response.PaginatedResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
 public interface CustomerService {
     CustomerResponse registerCustomer(CustomerRequest customerRequest);
     CustomerResponse updateCustomer(UUID id, CustomerRequest customerRequest);
+    PaginatedResponse<CustomerResponse> getAllCustomers(String name, Pageable pageable);
 }

@@ -4,8 +4,12 @@ import com.inventory.inventorySystem.dto.OnCreate;
 import com.inventory.inventorySystem.dto.OnUpdate;
 import com.inventory.inventorySystem.dto.request.CustomerRequest;
 import com.inventory.inventorySystem.dto.response.CustomerResponse;
+import com.inventory.inventorySystem.dto.response.PaginatedResponse;
 import com.inventory.inventorySystem.service.interfaces.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -32,4 +36,9 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK).body(customerResponse);
     }
 
+    @GetMapping
+    public ResponseEntity<PaginatedResponse<CustomerResponse>> getAllCustomers(@RequestParam(required = false) String name, @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+        PaginatedResponse<CustomerResponse> customerResponse = customerService.getAllCustomers(name, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(customerResponse);
+    }
 }
