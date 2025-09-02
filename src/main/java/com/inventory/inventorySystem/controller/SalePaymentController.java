@@ -8,23 +8,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/salePayment")
+@RequestMapping("/api/v1/sales")
 public class SalePaymentController {
 
     private final SalePaymentService salePaymentService;
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<SalePaymentResponse> updateSalePayment(@PathVariable UUID id, @Validated(OnUpdate.class) SalePaymentRequest salePaymentRequest){
-        SalePaymentResponse salePaymentResponse = salePaymentService.updateSalePayment(salePaymentRequest, id);
-        return ResponseEntity.status(HttpStatus.OK).body(salePaymentResponse);
+    @PostMapping("/{saleId}/payments")
+    public ResponseEntity<SalePaymentResponse> addSalePayment(@PathVariable UUID saleId, @RequestBody @Validated(OnUpdate.class) SalePaymentRequest salePaymentRequest){
+        SalePaymentResponse salePaymentResponse = salePaymentService.saveSalePayment(salePaymentRequest, saleId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salePaymentResponse);
     }
 }

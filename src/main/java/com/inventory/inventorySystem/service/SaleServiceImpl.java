@@ -40,7 +40,6 @@ public class SaleServiceImpl implements SaleService {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final SaleMapper saleMapper;
-    private final SalePaymentService salePaymentService;
     private final StringNormalizer stringNormalizer;
 
     @Override
@@ -59,10 +58,6 @@ public class SaleServiceImpl implements SaleService {
         List<SaleDetailResponse> saleDetailResponses = saleDetailService.registerSaleDetail(saleRequest.details(), sale);
         BigDecimal totalSale = calculateTotalAmount(saleDetailResponses);
         sale.setTotalSale(totalSale);
-
-        processSalePayment(saleRequest, sale);
-
-        sale = saleRepository.save(sale);
 
         return saleMapper.toDto(sale, saleDetailResponses);
     }
@@ -97,22 +92,5 @@ public class SaleServiceImpl implements SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
         }
         return customer;
-    }
-
-    private void processSalePayment(SaleRequest saleRequest, Sale sale) {
-        BigDecimal totalSale = sale.getTotalSale();
-        BigDecimal amountPaid = saleRequest.salePayment().amountPaid();
-
-        if (amountPaid.compareTo(totalSale) > 0) {
-            throw new IllegalArgumentException("The amount paid cannot be greater than the total sale amount.");
-            // Handle this exception later (personalize)
-        }
-
-        if (amountPaid.compareTo(BigDecimal.ZERO) > 0) {
-            salePaymentService.saveSalePayment(saleRequest.salePayment(), sale);
-            sale.setStatus(amountPaid.compareTo(totalSale) == 0 ? SaleStatus.PAID : SaleStatus.PENDING);
-        } else {
-            sale.setStatus(SaleStatus.PENDING);
-        }
     }
 }

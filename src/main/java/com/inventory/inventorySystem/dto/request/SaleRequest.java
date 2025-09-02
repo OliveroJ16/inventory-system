@@ -17,10 +17,7 @@ public record SaleRequest(
         UUID userId,
 
         @NotEmpty(message = "Sale must have at least one detail", groups = OnCreate.class)
-        @Valid List<SaleDetailRequest> details,
-
-        @NotNull(message = "SalePayment cannot be null", groups = OnCreate.class)
-        @Valid SalePaymentRequest salePayment
+        @Valid List<SaleDetailRequest> details
 ) { }
 
 
