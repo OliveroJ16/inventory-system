@@ -3,6 +3,7 @@ package com.inventory.inventorySystem.service;
 import com.inventory.inventorySystem.dto.request.SalePaymentRequest;
 import com.inventory.inventorySystem.dto.response.SalePaymentResponse;
 import com.inventory.inventorySystem.enums.SaleStatus;
+import com.inventory.inventorySystem.exceptions.PaymentProcessingException;
 import com.inventory.inventorySystem.exceptions.ResourceNotFoundException;
 import com.inventory.inventorySystem.mapper.interfaces.SalePaymentMapper;
 import com.inventory.inventorySystem.model.Sale;
@@ -33,20 +34,18 @@ public class SalePaymentServiceImpl implements SalePaymentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sale", "id", idSale));
 
         if (sale.getStatus() == SaleStatus.PAID) {
-            throw new IllegalStateException("La venta ya ha sido pagada en su totalidad.");
-            // Handler exception last
+            throw new PaymentProcessingException("The sale has already been paid in full.");
+        }
+
+        BigDecimal totalPaidSoFar = getSaleTotalPaid(sale);
+        BigDecimal newTotalPaid = totalPaidSoFar.add(salePaymentRequest.amountPaid());
+
+        if (newTotalPaid.compareTo(sale.getTotalSale()) > 0) {
+            throw new PaymentProcessingException("The total amount paid cannot be greater than the total of the sale.");
         }
 
         SalePayment salePayment = salePaymentMapper.toEntity(salePaymentRequest, sale);
         salePayment = salePaymentRepository.saveAndFlush(salePayment);
-
-        BigDecimal totalPaidSoFar = getSaleTotalPaid(sale);
-        BigDecimal newTotalPaid = totalPaidSoFar.add(salePayment.getAmountPaid());
-
-        if (newTotalPaid.compareTo(sale.getTotalSale()) > 0) {
-            throw new IllegalArgumentException("El monto total pagado no puede ser mayor que el total de la venta.");
-            // Handler exception last
-        }
 
         if (newTotalPaid.compareTo(sale.getTotalSale()) >= 0) {
             sale.setStatus(SaleStatus.PAID);
