@@ -1,6 +1,7 @@
 package com.inventory.inventorySystem.mapper;
 
 import com.inventory.inventorySystem.dto.request.RegisterRequest;
+import com.inventory.inventorySystem.dto.request.UserRequest;
 import com.inventory.inventorySystem.dto.response.UserResponse;
 import com.inventory.inventorySystem.enums.UserRole;
 import com.inventory.inventorySystem.mapper.interfaces.UserMapper;
@@ -37,6 +38,25 @@ public class UserMapperImpl implements UserMapper {
                 user.getCreationDate(),
                 user.getStatus()
         );
+    }
+
+    @Override
+    public void applyPartialUpdate(User user, UserRequest userRequest) {
+        if (userRequest.userName() != null && !userRequest.userName().isBlank()) {
+            user.setUserName(userRequest.userName());
+        }
+
+        if (userRequest.fullName() != null && !userRequest.fullName().isBlank()) {
+            user.setFullName(stringNormalizer.toTitleCase(userRequest.fullName()));
+        }
+
+        if (userRequest.email() != null && !userRequest.email().isBlank()) {
+            user.setEmail(userRequest.email());
+        }
+
+        if (userRequest.status() != null) {
+            user.setStatus(userRequest.status());
+        }
     }
 }
 
