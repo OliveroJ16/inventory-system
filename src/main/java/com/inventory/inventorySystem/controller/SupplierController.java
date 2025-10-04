@@ -3,9 +3,13 @@ package com.inventory.inventorySystem.controller;
 import com.inventory.inventorySystem.dto.OnCreate;
 import com.inventory.inventorySystem.dto.OnUpdate;
 import com.inventory.inventorySystem.dto.request.SupplierRequest;
+import com.inventory.inventorySystem.dto.response.PaginatedResponse;
 import com.inventory.inventorySystem.dto.response.SupplierResponse;
 import com.inventory.inventorySystem.service.interfaces.SupplierService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,5 +34,11 @@ public class SupplierController{
     public ResponseEntity<SupplierResponse> updateSupplier(@PathVariable UUID id, @Validated(OnUpdate.class) @RequestBody SupplierRequest supplierRequest){
         SupplierResponse supplierResponse = supplierService.updateSupplier(id, supplierRequest);
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<PaginatedResponse<SupplierResponse>> getAllSupplier(@PageableDefault(page = 0, size = 10, sort = "full_name", direction = Sort.Direction.ASC) Pageable pageable){
+        PaginatedResponse<SupplierResponse> supplierResponse = supplierService.getAllSupplier(pageable);
+        return  ResponseEntity.status(HttpStatus.OK).body(supplierResponse);
     }
 }

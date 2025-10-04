@@ -1,6 +1,7 @@
 package com.inventory.inventorySystem.service;
 
 import com.inventory.inventorySystem.dto.request.SupplierRequest;
+import com.inventory.inventorySystem.dto.response.PaginatedResponse;
 import com.inventory.inventorySystem.dto.response.SupplierResponse;
 import com.inventory.inventorySystem.exceptions.ResourceNotFoundException;
 import com.inventory.inventorySystem.mapper.interfaces.SupplierMapper;
@@ -8,6 +9,8 @@ import com.inventory.inventorySystem.model.Supplier;
 import com.inventory.inventorySystem.repository.SupplierRepository;
 import com.inventory.inventorySystem.service.interfaces.SupplierService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -35,4 +38,11 @@ public class SupplierServiceImpl implements SupplierService {
         return supplierMapper.toDto(supplier);
     }
 
+    @Override
+    public PaginatedResponse<SupplierResponse> getAllSupplier(Pageable pageable){
+        Page<Supplier> supplierPage;
+        supplierPage = supplierRepository.findAll(pageable);
+        Page<SupplierResponse> responsePage = supplierPage.map(supplierMapper::toDto);
+        return new PaginatedResponse<>(responsePage);
+    }
 }
